@@ -30,7 +30,7 @@ public class RDFDocumentHandler {
 	private String file = null;
 	private Dataset set = null;
 	private Model model = null;
-	private ArrayList<String> ids = new ArrayList<String>();
+	
 
 	/**
 	 * public reference of the Handler class

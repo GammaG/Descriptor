@@ -158,7 +158,7 @@ public class RDFDocumentHandler {
 
 	private void close() {
 		model.close();
-		set.commit();
+	 //	set.commit();
 		set.close();
 
 	}

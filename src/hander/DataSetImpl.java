@@ -5,7 +5,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 
 
 
-public class DataSet {
+public class DataSetImpl {
 	
 	private static String directory = "../DB";
 

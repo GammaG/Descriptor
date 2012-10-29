@@ -6,11 +6,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bbaw.wsp.parser.metadata.factory.MetadataParserFactory;
+import bbaw.wsp.parser.metadata.parsers.RdfMetadataParser;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
+
+import de.mpg.mpiwg.berlin.mpdl.exception.ApplicationException;
 
 
 /**
@@ -46,6 +51,26 @@ public class RDFDocumentHandler {
 		}
 		return false;
 	}
+	
+	/**
+	 * takes a file and scans it for the about id
+	 * 
+	 * @param uri
+	 * @return String as like as ID of the file
+	 */
+	@SuppressWarnings("unused")
+	private String scanID(final String uri){
+		try {
+			RdfMetadataParser fac = MetadataParserFactory.newRdfMetadataParser(uri);
+			return fac.getRdfAboutValue();
+			
+		} catch (ApplicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 
 	/**
 	 * here the model gets created given file will read and write in a model
@@ -73,18 +98,16 @@ public class RDFDocumentHandler {
 	 * @return true if an unused id was found.
 	 */
 	@SuppressWarnings({ "unused" })
-	private boolean getDescription(final Collection<String> liste) {
-		ids.addAll(liste);
+	private boolean getDescription(String id) {
+		
 
-		for (String s : ids) {
-			if (!set.containsNamedModel(s)) {
+		
+			if (!set.containsNamedModel(id)) {
 				if (model != null) {
-					set.addNamedModel(s, model);
+					set.addNamedModel(id, model);
 					return true;
 				}
-
-			}
-
+			
 		}
 
 		return false;

@@ -36,7 +36,7 @@ public class RdfMetadataParser extends MetadataParser {
    *         resource)
    */
   public String getRdfAboutValue() {
-    String erg = (String) buildXPath("//rdf:Description/@rdf:about", false); // First
+    String erg = (String) buildXPath("//rdf:Description[1]/@rdf:about", false); // First
                                                                              // node
     return erg;
   }

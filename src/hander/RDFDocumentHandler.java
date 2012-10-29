@@ -3,8 +3,7 @@ package hander;
 import java.io.InputStream;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
+
 
 import bbaw.wsp.parser.metadata.factory.MetadataParserFactory;
 import bbaw.wsp.parser.metadata.parsers.RdfMetadataParser;
@@ -30,6 +29,7 @@ public class RDFDocumentHandler {
 	private String file = null;
 	private Dataset set = null;
 	private Model model = null;
+	private String test = null;
 	
 
 	/**
@@ -39,15 +39,19 @@ public class RDFDocumentHandler {
 	 *            give RDF file
 	 * @return true if success, false if failed
 	 */
-	public boolean putFile(String file) {
+	public boolean putFile(final String file) {
 		try {
 			this.file = file;
 			getSet();
-			parseModel();
+			getModel();
+			putDescription(scanID(file));
+			showSet();
+			
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
-			set.close();
+			close();
 		}
 		return false;
 	}
@@ -55,14 +59,15 @@ public class RDFDocumentHandler {
 	/**
 	 * takes a file and scans it for the about id
 	 * 
-	 * @param uri
+	 * @param file
 	 * @return String as like as ID of the file
 	 */
-	@SuppressWarnings("unused")
-	private String scanID(final String uri){
+	
+	private String scanID(final String file){
 		try {
-			RdfMetadataParser fac = MetadataParserFactory.newRdfMetadataParser(uri);
-			return fac.getRdfAboutValue();
+			RdfMetadataParser fac = MetadataParserFactory.newRdfMetadataParser(file);
+			test = fac.getRdfAboutValue();
+			return test;
 			
 		} catch (ApplicationException e) {
 			// TODO Auto-generated catch block
@@ -75,7 +80,7 @@ public class RDFDocumentHandler {
 	/**
 	 * here the model gets created given file will read and write in a model
 	 */
-	private void parseModel() {
+	private void getModel() {
 		model = ModelFactory.createDefaultModel();
 
 		InputStream in = FileManager.get().open(file);
@@ -97,8 +102,8 @@ public class RDFDocumentHandler {
 	 * @param liste
 	 * @return true if an unused id was found.
 	 */
-	@SuppressWarnings({ "unused" })
-	private boolean getDescription(String id) {
+	
+	private boolean putDescription(String id) {
 		
 
 		
@@ -119,6 +124,18 @@ public class RDFDocumentHandler {
 	private void getSet() {
 		set = DataSet.getSet();
 		set.begin(ReadWrite.WRITE);
+	}
+	
+	private void showSet(){
+		Model m = set.getNamedModel(test);
+		System.out.println("ID: "+test);
+		m.write(System.out);
+	}
+	
+	private void close(){
+		model.close();
+		set.close();
+		
 	}
 
 }

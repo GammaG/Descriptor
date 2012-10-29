@@ -26,7 +26,7 @@ public class JenaTester {
     	
     }
     
-    public void testStore(){
+    public void testStore(String file){
     	JenaWspStore wspStore = new JenaWspStore();
     	wspStore.createStore();
     	wspStore.createModelFactory();
@@ -35,7 +35,15 @@ public class JenaTester {
     	Dataset dataset = wspStore.getDataset();
 //    	DatasetImpl dsImpl = new DatasetImpl(dataset);
     	RdfManager manager = new RdfManager();
-//    	wspStore.openDataset();
+    	Model model = wspStore.getFreshModel();
+    	
+    	
+    	model = manager.readFile(model, file);
+    	
+    	writeToDotLang(manager.getAllTriplesAsDot(model));
+    	
+    	
+    	//    	wspStore.openDataset();
 //    	Model freshModel = wspStore.getFreshModel();
 //    	Model moodel = manager.readFile(freshModel, dataset, oreTestSaschas);
 //    	wspStore.addNamedModelToWspStore("http://wsp.bbaw.de/oreTestSaschas", moodel); 
@@ -174,7 +182,7 @@ public class JenaTester {
 	
 	private void writeToDotLang(String res) {	
 		try {
-			OutputStream outputStream = new FileOutputStream(new File("oreTestBriefe.dot"));
+			OutputStream outputStream = new FileOutputStream(new File("../oreTestBriefe.dot"));
 			Writer writer = new OutputStreamWriter(outputStream);
 
 			writer.write(res);

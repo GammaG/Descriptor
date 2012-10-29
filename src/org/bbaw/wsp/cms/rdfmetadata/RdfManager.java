@@ -55,7 +55,7 @@ public class RdfManager {
 	
 	/**
 	 * 
-	 * 
+	 * throws nosuchelementexception
 	 * @param store
 	 * @return
 	 */
@@ -129,7 +129,7 @@ public class RdfManager {
 	 * INSERT Graph
 	 * @param store
 	 */
-	public Model readFile(Model model, Dataset dataset, String loc){
+	public Model readFile(Model model, String loc){
 		Model moodel = FileManager.get().readModel(model, loc);
 //		
 //		StmtIterator statements = moodel.listStatements();

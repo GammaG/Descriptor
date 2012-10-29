@@ -20,7 +20,12 @@ public class DotTester {
 				file = chooser.getSelectedFile().getAbsolutePath();
 			}
 			
-			new RDFDocumentHandler().putFile(file);
+			JenaTester jenatester = new JenaTester();
+			
+			
+			jenatester.testStore(file);
+					
+			
 			
 			
 		}

@@ -23,7 +23,7 @@ import com.hp.hpl.jena.tdb.store.GraphTDB;
 
 public class JenaWspStore {
 
-	final String directory = "/home/juergens/wspTripleStore";
+	final String directory = "../DB2";
 	private Dataset dataset;
 	private Model defaultModel; 
 	private InfModel rdfsModel;

@@ -182,12 +182,24 @@ public class JenaTester {
 	
 	private void writeToDotLang(String res) {	
 		try {
-			OutputStream outputStream = new FileOutputStream(new File("../oreTestBriefe.dot"));
+			
+			System.out.println(res);
+						
+			File file = new File("test.dot"); 
+			System.out.println(file.canWrite());
+			OutputStream outputStream = new FileOutputStream(file);
+			System.out.println(file.getAbsolutePath());
 			Writer writer = new OutputStreamWriter(outputStream);
-
+			
+			System.out.println("Writer created");
+			
 			writer.write(res);
-
+			
+			System.out.println("Writer has written");
+			
 			writer.close();
+			
+			System.out.println("Writer closed");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -55,7 +55,6 @@ public class RdfManager {
 	
 	/**
 	 * 
-	 * throws nosuchelementexception
 	 * @param store
 	 * @return
 	 */
@@ -68,8 +67,9 @@ public class RdfManager {
         dump.append("edge [len=2];");
         dump.append('\n');
         while (statements.hasNext()) {
-        	System.out.println("statements.nextStatement() "+statements.nextStatement());
+        	
             Statement statement = statements.nextStatement();
+           // System.out.println("statements.nextStatement() "+statement);
             RDFNode object = statement.getObject();
             dump.append("\"")
             	.append(statement.getSubject().getLocalName())

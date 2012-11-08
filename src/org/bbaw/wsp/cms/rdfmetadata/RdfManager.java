@@ -29,7 +29,12 @@ import com.hp.hpl.jena.util.FileManager;
 
 public class RdfManager {
 
-	
+	private int anz;
+
+
+	public RdfManager(int anz){
+		this.anz = anz;
+	}
 	/**
 	 * 
 	 * @param store
@@ -72,7 +77,7 @@ public class RdfManager {
            // System.out.println("statements.nextStatement() "+statement);
             RDFNode object = statement.getObject();
             
-            if(object.toString().length() < 65 ){
+            if(object.toString().length() < anz ){
            
             dump.append("\"")
             	.append(statement.getSubject().getLocalName())
@@ -87,8 +92,9 @@ public class RdfManager {
                 .append(";")
                 .append('\n');
         }
-        dump.append('}');
+        
         }
+        dump.append('}');
         return dump.toString();
     }
 	
@@ -160,6 +166,7 @@ public class RdfManager {
 	 */
 	public void deleteRecord(Model model, String queryString){
 
+		@SuppressWarnings("unused")
 		GraphStore graphStore = GraphStoreFactory.create(model);
 		queryString = "DELETE WHERE { <http://avh.bbaw.de/biblio/Aggr> ?p ?o }";
 				

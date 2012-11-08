@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.query.*;
 
 public class JenaTester {
 
-	private Model model;
-	private Dataset dataset;
+	//private Model model;
+	//private Dataset dataset;
 	private JenaWspStore wspStore;
 	private RdfManager manager;
 	private File file;
@@ -34,6 +33,11 @@ public class JenaTester {
 
 	}
 
+	/**
+	 * Creates the name of the dot file by changing the name from .rdf to .dot
+	 * 
+	 * @return
+	 */
 	public String getID() {
 		String id = file.getName();
 		dot = id.substring(0, id.length() - 4) + ".dot";
@@ -42,8 +46,16 @@ public class JenaTester {
 
 	}
 
-	public String testStore(File dat, String d) {
-		des = d+"/";
+	/**
+	 * Creates the model, parses the model and save it as dot
+	 * 
+	 * @param dat
+	 * @param d
+	 * @param anz
+	 * @return the dot file name
+	 */
+	public String testStore(File dat, String d, int anz) {
+		des = d + "/";
 
 		file = dat;
 		// DatasetImpl dsImpl = new DatasetImpl(dataset);
@@ -54,7 +66,7 @@ public class JenaTester {
 		// removeAll() performed?
 
 		// dataset = wspStore.getDataset();
-		manager = new RdfManager();
+		manager = new RdfManager(anz);
 
 		Model model = wspStore.getFreshModel();
 
@@ -216,6 +228,11 @@ public class JenaTester {
 		// dataset.close();
 	}
 
+	/**
+	 * Writes the Dot file into filesystem
+	 * 
+	 * @param res
+	 */
 	private void writeToDotLang(String res) {
 		try {
 

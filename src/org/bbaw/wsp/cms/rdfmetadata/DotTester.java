@@ -5,47 +5,46 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextArea;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
-
-import hander.RDFDocumentHandler;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class DotTester extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5952164735517923589L;
+
 	public static void main(String[] args) {
-		String file = null;
 
 		new DotTester();
-
-
 
 	}
 
 	private JButton btn_src;
 	private JButton btn_go;
 	private Label src;
-	private Label fin;
+	private JSlider slider;
 	private JButton btn_des;
 	private Label des;
 	private String srcF;
 	private String desF;
 	private JenaTester jenatester = new JenaTester();
 	private TextArea textArea;
+	private Label info;
 
 	/**
-	 * Opens a now Frame
+	 * Opens a new Frame
 	 */
 	public DotTester() {
 		super("RDF2DOT2PNG");
@@ -57,19 +56,31 @@ public class DotTester extends JFrame {
 	}
 
 	/**
-	 * Creates the Elements of GUI
+	 * Creates the Elements of GUI add value change listener on slider
 	 */
 	private void initalisation() {
 		setLayout(new BorderLayout(5, 5));
 
 		Panel panel = new Panel();
-		panel.setLayout(new GridLayout(6, 1));
+		panel.setLayout(new GridLayout(7, 1));
 		btn_src = new JButton("Choose Source Folder");
 		src = new Label("no Source Folder selected");
 		btn_des = new JButton("Choose Destination Folder");
 		des = new Label("no Destination Folder selected");
 		btn_go = new JButton("Start");
-		fin = new Label("");
+		slider = new JSlider(20, 100, 40);
+		info = new Label("");
+		info.setText("   accuracy is set to " + slider.getValue()
+				+ " Elements.");
+		slider.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				info.setText("   accuracy is set to " + slider.getValue()
+						+ " Elements.");
+
+			}
+		});
 
 		addButtonListener(btn_src);
 		addButtonListener(btn_go);
@@ -79,10 +90,11 @@ public class DotTester extends JFrame {
 		panel.add(btn_des);
 		panel.add(des);
 		panel.add(btn_go);
-		panel.add(fin);
+		panel.add(slider);
+		panel.add(info);
 
 		textArea = new TextArea("Welcome\n");
-				
+
 		Panel mainPanel = new Panel();
 		mainPanel.setLayout(new GridLayout(1, 2));
 		mainPanel.add(panel);
@@ -93,7 +105,7 @@ public class DotTester extends JFrame {
 	}
 
 	/**
-	 * Buttonlistener Class for GUI
+	 * buttonlistener for buttons 
 	 * 
 	 * @param b
 	 */
@@ -120,51 +132,65 @@ public class DotTester extends JFrame {
 
 				} else if (ev.getActionCommand().equals("Start")) {
 
-					if(srcF == null){
+					if (srcF == null) {
 						println("no source choosed!");
 						return;
-					}
-					else if(desF == null){
+					} else if (desF == null) {
 						println("no destination choosed!");
 					}
-					
+
 					ArrayList<File> liste = new ArrayList<File>();
 					liste = scanforRDF(srcF);
-					if(liste.isEmpty()){
+					if (liste.isEmpty()) {
 						println("There are no RDF files in directory");
 						return;
 					}
-					println("There are "+liste.size()+" RDF elements.");
+					if (liste.size() == 1) {
+						println("There is one RDF element.");
+					} else
+						println("There are " + liste.size() + " RDF elements.");
 					println("Started!");
 					execution(liste);
-					
-					
-					
+					println("finished!");
+					info.setText("finished!");
+
 				}
 
 			}
 		});
 	}
 
-	private void execution(ArrayList<File> col){
-		
+	/**
+	 * Main function calls teststore and bash
+	 * 
+	 * @param col
+	 */
+	private void execution(ArrayList<File> col) {
+
 		String dot;
-		
-		
-		for (File file : col) {
-			dot = jenatester.testStore(file, desF);
-						
-			String cmd = "dot -Tpng "+dot+" -o "+dot.substring(0, dot.length()-4)+".png";
-			bash(cmd ,new File(desF));
-			
-			println("Graph created for "+file.getName());
+		println("Choosed accuracy = " + slider.getValue());
+
+		try {
+			for (File file : col) {
+				dot = jenatester.testStore(file, desF, slider.getValue());
+
+				String cmd = "dot -Tpng " + dot + " -o "
+						+ dot.substring(0, dot.length() - 4) + ".png";
+				// String cmd = "dot -Tpng Briefe2.dot -o "
+				// + dot.substring(0, dot.length() - 4) + ".png";
+				bash(cmd, new File(desF));
+
+				println("Graph created for " + file.getName());
+			}
+		} catch (Exception e) {
+			println("Error occurred, continues..");
+
 		}
-		
-		
 	}
-	
+
 	/**
 	 * Seperates the files with ending RDF
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -175,7 +201,7 @@ public class DotTester extends JFrame {
 		for (File f : dir.listFiles()) {
 			if (f.getName().toLowerCase().endsWith(".rdf"))
 				liste.add(f);
-				println(f.getName());
+			println(f.getName());
 
 		}
 
@@ -217,12 +243,12 @@ public class DotTester extends JFrame {
 	 * @param cwd
 	 */
 	private void bash(String cmd, File cwd) {
-		if (System.getProperty("os.name").startsWith("Windows")){
+		if (System.getProperty("os.name").startsWith("Windows")) {
 			println("only works with Unix-shell!");
 			return;
 		}
 		try {
-			println("Path: "+cwd.getAbsolutePath());
+			println("Path: " + cwd.getAbsolutePath());
 			println(cmd);
 			ProcessBuilder pb = new ProcessBuilder("bash", "-c", cmd);
 			if (cwd != null) {
@@ -239,11 +265,11 @@ public class DotTester extends JFrame {
 				println(line);
 			}
 
-			int exitVal = pr.waitFor();
-			if (exitVal != 0) {
-				throw new Error("Failure while executing bash command '" + cmd
-						+ "'. Return code = " + exitVal);
-			}
+			// int exitVal = pr.waitFor();
+			// if (exitVal != 0) {
+			// throw new Error("Failure while executing bash command '" + cmd
+			// + "'. Return code = " + exitVal);
+			// }
 		} catch (Exception e) {
 			throw new Error("Could not execute bash command '" + cmd + "'.", e);
 		}

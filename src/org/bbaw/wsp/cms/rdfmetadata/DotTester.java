@@ -135,8 +135,10 @@ public class DotTester extends JFrame {
 					if (srcF == null) {
 						println("no source choosed!");
 						return;
-					} else if (desF == null) {
+					} 
+					if (desF == null) {
 						println("no destination choosed!");
+						return;
 					}
 
 					ArrayList<File> liste = new ArrayList<File>();

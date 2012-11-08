@@ -105,7 +105,7 @@ public class DotTester extends JFrame {
 	}
 
 	/**
-	 * buttonlistener for buttons 
+	 * buttonlistener for buttons
 	 * 
 	 * @param b
 	 */
@@ -170,8 +170,8 @@ public class DotTester extends JFrame {
 		String dot;
 		println("Choosed accuracy = " + slider.getValue());
 
-		try {
-			for (File file : col) {
+		for (File file : col) {
+			try {
 				dot = jenatester.testStore(file, desF, slider.getValue());
 
 				String cmd = "dot -Tpng " + dot + " -o "
@@ -181,11 +181,13 @@ public class DotTester extends JFrame {
 				bash(cmd, new File(desF));
 
 				println("Graph created for " + file.getName());
-			}
-		} catch (Exception e) {
-			println("Error occurred, continues..");
 
+			} catch (Exception e) {
+				println("Error occurred, continues..");
+
+			}
 		}
+
 	}
 
 	/**
@@ -265,11 +267,11 @@ public class DotTester extends JFrame {
 				println(line);
 			}
 
-			// int exitVal = pr.waitFor();
-			// if (exitVal != 0) {
-			// throw new Error("Failure while executing bash command '" + cmd
-			// + "'. Return code = " + exitVal);
-			// }
+			int exitVal = pr.waitFor();
+			if (exitVal != 0) {
+				throw new Error("Failure while executing bash command '" + cmd
+						+ "'. Return code = " + exitVal);
+			}
 		} catch (Exception e) {
 			throw new Error("Could not execute bash command '" + cmd + "'.", e);
 		}

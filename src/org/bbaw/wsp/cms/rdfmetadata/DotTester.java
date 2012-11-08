@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import hander.RDFDocumentHandler;
 
@@ -27,9 +29,7 @@ public class DotTester extends JFrame {
 
 		new DotTester();
 
-		// JenaTester jenatester = new JenaTester();
-		//
-		// jenatester.testStore(file);
+
 
 	}
 
@@ -41,9 +41,12 @@ public class DotTester extends JFrame {
 	private Label des;
 	private String srcF;
 	private String desF;
-
+	private JenaTester jenatester = new JenaTester();
 	private TextArea textArea;
 
+	/**
+	 * Opens a now Frame
+	 */
 	public DotTester() {
 		super("RDF2DOT2PNG");
 		setSize(600, 300);
@@ -53,6 +56,9 @@ public class DotTester extends JFrame {
 		initalisation();
 	}
 
+	/**
+	 * Creates the Elements of GUI
+	 */
 	private void initalisation() {
 		setLayout(new BorderLayout(5, 5));
 
@@ -75,8 +81,8 @@ public class DotTester extends JFrame {
 		panel.add(btn_go);
 		panel.add(fin);
 
-		textArea = new TextArea("Welcome");
-
+		textArea = new TextArea("Welcome\n");
+				
 		Panel mainPanel = new Panel();
 		mainPanel.setLayout(new GridLayout(1, 2));
 		mainPanel.add(panel);
@@ -86,6 +92,11 @@ public class DotTester extends JFrame {
 
 	}
 
+	/**
+	 * Buttonlistener Class for GUI
+	 * 
+	 * @param b
+	 */
 	private void addButtonListener(JButton b) {
 		b.addActionListener(new ActionListener() {
 
@@ -109,16 +120,82 @@ public class DotTester extends JFrame {
 
 				} else if (ev.getActionCommand().equals("Start")) {
 
+					if(srcF == null){
+						println("no source choosed!");
+						return;
+					}
+					else if(desF == null){
+						println("no destination choosed!");
+					}
+					
+					ArrayList<File> liste = new ArrayList<File>();
+					liste = scanforRDF(srcF);
+					if(liste.isEmpty()){
+						println("There are no RDF files in directory");
+						return;
+					}
+					println("There are "+liste.size()+" RDF elements.");
+					println("Started!");
+					execution(liste);
+					
+					
+					
 				}
 
 			}
 		});
 	}
 
-	public void println(String str) {
+	private void execution(ArrayList<File> col){
+		
+		String dot;
+		
+		
+		for (File file : col) {
+			dot = jenatester.testStore(file, desF);
+						
+			String cmd = "dot -Tpng "+dot+" -o "+dot.substring(0, dot.length()-4)+".png";
+			bash(cmd ,new File(desF));
+			
+			println("Graph created for "+file.getName());
+		}
+		
+		
+	}
+	
+	/**
+	 * Seperates the files with ending RDF
+	 * @param str
+	 * @return
+	 */
+	private ArrayList<File> scanforRDF(String str) {
+
+		File dir = new File(str);
+		ArrayList<File> liste = new ArrayList<File>();
+		for (File f : dir.listFiles()) {
+			if (f.getName().toLowerCase().endsWith(".rdf"))
+				liste.add(f);
+				println(f.getName());
+
+		}
+
+		return liste;
+	}
+
+	/**
+	 * Adds a line to the TextArea
+	 * 
+	 * @param str
+	 */
+	private void println(String str) {
 		textArea.append(str + "\n");
 	}
 
+	/**
+	 * Is used to Choose the folder and returns the folder path
+	 * 
+	 * @return
+	 */
 	private String fileChooser() {
 		JFileChooser chooser = new JFileChooser();
 		// Note: source for ExampleFileFilter can be found in
@@ -140,9 +217,13 @@ public class DotTester extends JFrame {
 	 * @param cwd
 	 */
 	private void bash(String cmd, File cwd) {
-		if (System.getProperty("os.name").startsWith("Windows"))
+		if (System.getProperty("os.name").startsWith("Windows")){
+			println("only works with Unix-shell!");
 			return;
+		}
 		try {
+			println("Path: "+cwd.getAbsolutePath());
+			println(cmd);
 			ProcessBuilder pb = new ProcessBuilder("bash", "-c", cmd);
 			if (cwd != null) {
 				pb.directory(cwd);

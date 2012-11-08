@@ -15,30 +15,53 @@ import com.hp.hpl.jena.query.*;
 public class JenaTester {
 
 	private Model model;
+	private Dataset dataset;
+	private JenaWspStore wspStore;
+	private RdfManager manager;
+	private File file;
+	private String des;
+	private String dot;
 
-	static final String oreTestBriefe = "/home/juergens/WspEtc/test/Briefe.rdf";
-	static final String oreTestSaschas = "/home/juergens/WspEtc/test/AvH-Briefwechsel-Ehrenberg-sascha.rdf";
-	static final String inputFileName = "/home/juergens/workspace/wspApp/wspCmsCore/src/org/bbaw/wsp/cms/metadata/rdfJenaTest.rdf";
-	static final String oreTest = "/home/juergens/WspEtc/test/AvHBiblio.rdf";
+	// static final String oreTestBriefe =
+	// "/home/juergens/WspEtc/test/Briefe.rdf";
+	// static final String oreTestSaschas =
+	// "/home/juergens/WspEtc/test/AvH-Briefwechsel-Ehrenberg-sascha.rdf";
+	// static final String inputFileName =
+	// "/home/juergens/workspace/wspApp/wspCmsCore/src/org/bbaw/wsp/cms/metadata/rdfJenaTest.rdf";
+	// static final String oreTest = "/home/juergens/WspEtc/test/AvHBiblio.rdf";
 
 	public JenaTester() {
 
 	}
 
-	public void testStore(String file) {
-		JenaWspStore wspStore = new JenaWspStore();
+	public String getID() {
+		String id = file.getName();
+		dot = id.substring(0, id.length() - 4) + ".dot";
+
+		return des + dot;
+
+	}
+
+	public String testStore(File dat, String d) {
+		des = d+"/";
+
+		file = dat;
+		// DatasetImpl dsImpl = new DatasetImpl(dataset);
+		wspStore = new JenaWspStore();
+
 		wspStore.createStore();
 		wspStore.createModelFactory();
 		// removeAll() performed?
 
-		Dataset dataset = wspStore.getDataset();
-		// DatasetImpl dsImpl = new DatasetImpl(dataset);
-		RdfManager manager = new RdfManager();
+		// dataset = wspStore.getDataset();
+		manager = new RdfManager();
+
 		Model model = wspStore.getFreshModel();
 
-		model = manager.readFile(model, file);
+		model = manager.readFile(model, file.getAbsolutePath());
 
 		writeToDotLang(manager.getAllTriplesAsDot(model));
+		return dot;
 
 		// wspStore.openDataset();
 		// Model freshModel = wspStore.getFreshModel();
@@ -82,10 +105,10 @@ public class JenaTester {
 		// System.out.println("    " + iter.nextStatement());
 		// }
 
-		dataset = wspStore.getDataset();
-		wspStore.openDataset();
-		manager.count(dataset);
-		wspStore.closeDataset();
+		// dataset = wspStore.getDataset();
+		// wspStore.openDataset();
+		// manager.count(dataset);
+		// wspStore.closeDataset();
 		//
 		// wspStore.openDataset();
 		// String sparqlSelect =
@@ -145,12 +168,16 @@ public class JenaTester {
 		//
 		// System.out.println(manager.getAllTriples(model));
 
-		String updateIntoNamed = "PREFIX dc:  <http://purl.org/dc/elements/1.1/> "
-				+ "INSERT DATA INTO <http://wsp.bbaw.de/oreTestBriefe>"
-				+ " { <http://www.bbaw.de/posterDh> dc:title  \"Digital Knowledge Store\" } ";
-		String updateToDefault = "PREFIX dc:  <http://purl.org/dc/elements/1.1/> "
-				+ "INSERT DATA "
-				+ " { <http://www.bbaw.de/posterDh> dc:title  \"Digital Knowledge Store\" } ";
+		// String updateIntoNamed =
+		// "PREFIX dc:  <http://purl.org/dc/elements/1.1/> "
+		// + "INSERT DATA INTO <http://wsp.bbaw.de/oreTestBriefe>"
+		// +
+		// " { <http://www.bbaw.de/posterDh> dc:title  \"Digital Knowledge Store\" } ";
+		// String updateToDefault =
+		// "PREFIX dc:  <http://purl.org/dc/elements/1.1/> "
+		// + "INSERT DATA "
+		// +
+		// " { <http://www.bbaw.de/posterDh> dc:title  \"Digital Knowledge Store\" } ";
 		// wspStore.openDataset();
 		// manager.performUpdate(dataset, updateToDefault);
 		//
@@ -186,29 +213,24 @@ public class JenaTester {
 		// }
 		// wspStore.closeDataset();
 		// model.close();
-		dataset.close();
+		// dataset.close();
 	}
 
 	private void writeToDotLang(String res) {
 		try {
 
-			System.out.println(res);
-
-			File file = new File("test.dot");
+			File file = new File(getID());
 
 			OutputStream outputStream = new FileOutputStream(file);
 
 			Writer writer = new OutputStreamWriter(outputStream);
 
-			System.out.println("Writer created");
-
 			writer.write(res);
-
-			System.out.println("Writer has written");
 
 			writer.close();
 
-			System.out.println("Writer closed");
+			// super.println(dot + " has been created.");
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -71,6 +71,9 @@ public class RdfManager {
             Statement statement = statements.nextStatement();
            // System.out.println("statements.nextStatement() "+statement);
             RDFNode object = statement.getObject();
+            
+            if(object.toString().length() < 65 ){
+           
             dump.append("\"")
             	.append(statement.getSubject().getLocalName())
                 .append("\" ")
@@ -85,6 +88,7 @@ public class RdfManager {
                 .append('\n');
         }
         dump.append('}');
+        }
         return dump.toString();
     }
 	

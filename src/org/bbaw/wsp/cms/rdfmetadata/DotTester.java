@@ -71,13 +71,13 @@ public class DotTester extends JFrame {
 		slider = new JSlider(20, 100, 40);
 		info = new Label("");
 		info.setText("   accuracy is set to " + slider.getValue()
-				+ " Elements.");
+				+ " Chars.");
 		slider.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				info.setText("   accuracy is set to " + slider.getValue()
-						+ " Elements.");
+						+ " Chars.");
 
 			}
 		});
@@ -174,6 +174,7 @@ public class DotTester extends JFrame {
 
 		for (File file : col) {
 			try {
+				
 				dot = jenatester.testStore(file, desF, slider.getValue());
 
 				String cmd = "dot -Tpng " + dot + " -o "

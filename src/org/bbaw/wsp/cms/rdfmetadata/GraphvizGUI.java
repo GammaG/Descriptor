@@ -18,16 +18,16 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class DotTester extends JFrame {
+public class GraphvizGUI extends JFrame {
 
 	/**
-	 * 
+	 * Marco Seidler (shk2) tool for creation of PNGs based to given RDFs
 	 */
 	private static final long serialVersionUID = 5952164735517923589L;
 
 	public static void main(String[] args) {
 
-		new DotTester();
+		new GraphvizGUI();
 
 	}
 
@@ -46,7 +46,7 @@ public class DotTester extends JFrame {
 	/**
 	 * Opens a new Frame
 	 */
-	public DotTester() {
+	public GraphvizGUI() {
 		super("RDF2DOT2PNG");
 		setSize(600, 300);
 		setLocation(300, 300);
